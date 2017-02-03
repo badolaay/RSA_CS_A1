@@ -6,18 +6,34 @@ using namespace std;
 
 char textArray[] = { ' ', 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z' };
 
+/*Method to trim white space from string -- Copied from StackOverflow*/
+string trim(string const& str)
+{
+	if (str.empty())
+		return str;
+
+	std::size_t firstScan = str.find_first_not_of(' ');
+	std::size_t first = firstScan == std::string::npos ? str.length() : firstScan;
+	std::size_t last = str.find_last_not_of(' ');
+	return str.substr(first, last - first + 1);
+}
+
 string getOriginalMessage(string msgInBase27) {
 	string message = "";
-	for (char& c : msgInBase27) {
-		if (c == ' ') {
-			message += ' ';
-		}
-		else {
-			message += textArray[c - 48];
-		}
+	msgInBase27 = trim(msgInBase27);
+	string delimiter = " ";
+	size_t pos = 0;
+	string token;
+
+	while ((pos = msgInBase27.find(delimiter)) != std::string::npos) {
+		token = msgInBase27.substr(0, pos);
+		message += textArray[stoi(token)];
+		msgInBase27.erase(0, pos + delimiter.length());
 	}
-	return message;
+
+	return 	message += textArray[stoi(msgInBase27)];;
 }
+
 /*Method to convert decimal to another base*/
 string convertBases(unsigned long number, unsigned long base) {
 	if (number == 0) {
@@ -25,7 +41,7 @@ string convertBases(unsigned long number, unsigned long base) {
 		return "";
 	}
 	else {
-		return 	convertBases(number / base, base) + to_string(number%base);
+		return 	convertBases(number / base, base) + " " + to_string(number%base);
 	}
 }
 
